@@ -53,7 +53,7 @@ ALostArkCharacter::ALostArkCharacter()
 	AttributeSet = CreateDefaultSubobject<ULostArkAttributeSet>(TEXT("AttributeSet"));
 
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
-	WeaponMesh->SetupAttachment(GetMesh(), TEXT("b_wp_1"));
+	WeaponMesh->SetupAttachment(GetMesh());
 
 	bIsLeftFootForward = true;
 	bIsDead = false;
@@ -65,6 +65,26 @@ ALostArkCharacter::ALostArkCharacter()
 UAbilitySystemComponent* ALostArkCharacter::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+void ALostArkCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (WeaponMesh && GetMesh())
+	{
+		// 비전투 상태(등에 맴)로 시작
+		WeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponUnequippedSocketName);
+	}
+}
+
+void ALostArkCharacter::SetWeaponEquipped(bool bIsEquipped)
+{
+	if (WeaponMesh && GetMesh())
+	{
+		FName TargetSocket = bIsEquipped ? WeaponEquippedSocketName : WeaponUnequippedSocketName;
+		WeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TargetSocket);
+	}
 }
 
 void ALostArkCharacter::PossessedBy(AController* NewController)
@@ -90,6 +110,8 @@ void ALostArkCharacter::PossessedBy(AController* NewController)
 				}
 			}
 		}
+
+		AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("State.Attacking")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ALostArkCharacter::OnAttackingTagChanged);
 	}
 }
 
@@ -184,7 +206,37 @@ void ALostArkCharacter::OnSkillInputReleased(ELostArkAbilityInputID InputID)
 	}
 }
 
+void ALostArkCharacter::OnAttackingTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	if (NewCount > 0)
+	{
+		// 전투(공격) 진입 시 즉시 장착
+		GetWorldTimerManager().ClearTimer(SheathWeaponTimerHandle);
+		SetWeaponEquipped(true);
+	}
+	else
+	{
+		// 전투 종료 시 타이머 시작
+		if (SheathWeaponTimeout > 0.f)
+		{
+			GetWorldTimerManager().SetTimer(SheathWeaponTimerHandle, this, &ALostArkCharacter::PlaySheathWeaponMontage, SheathWeaponTimeout, false);
+		}
+		else
+		{
+			PlaySheathWeaponMontage();
+		}
+	}
+}
 
-
-
-
+void ALostArkCharacter::PlaySheathWeaponMontage()
+{
+	if (SheathWeaponMontage)
+	{
+		PlayAnimMontage(SheathWeaponMontage);
+	}
+	else
+	{
+		// 설정된 몽타주가 없으면 즉시 납도
+		SetWeaponEquipped(false);
+	}
+}
