@@ -13,6 +13,7 @@
 #include "LostArk/Ability/LostArkCharacterComboAttackAbility.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "EnhancedInputComponent.h"
+#include "LostArk/Ability/Skills/LostArkSkill_Targeting.h"
 
 static const float DefaultCapsuleRadius = 42.f;
 static const float DefaultCapsuleHalfHeight = 96.f;
@@ -106,7 +107,24 @@ void ALostArkCharacter::PossessedBy(AController* NewController)
 			{
 				if (Bind.AbilityClass)
 				{
-					AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Bind.AbilityClass, 1, static_cast<int32>(Bind.InputID), this));
+					UE_LOG(LogTemp, Warning, TEXT("[Character] GiveAbility Called for %s"), *Bind.AbilityClass->GetName());
+					//AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Bind.AbilityClass, 1, static_cast<int32>(Bind.InputID), this));
+
+					FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(
+						FGameplayAbilitySpec(Bind.AbilityClass, 1, static_cast<int32>(Bind.InputID), this)
+					);
+
+					if (FGameplayAbilitySpec* GrantedSpec = AbilitySystemComponent->FindAbilitySpecFromHandle(Handle))
+					{
+						if (ULostArkSkill_Targeting* TargetingAbility = Cast<ULostArkSkill_Targeting>(GrantedSpec->GetPrimaryInstance()))
+						{
+							TargetingAbility->SkillInputAction = Bind.InputAction;
+						}
+						else
+						{
+							UObject* PrimaryInstance = GrantedSpec->GetPrimaryInstance();
+						}
+					}
 				}
 			}
 		}

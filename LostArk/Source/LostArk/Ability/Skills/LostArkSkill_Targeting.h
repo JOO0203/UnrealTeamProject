@@ -4,6 +4,8 @@
 #include "LostArk/Ability/LostArkSkillGameplayAbility.h"
 #include "LostArkSkill_Targeting.generated.h"
 
+class UInputAction;
+
 UCLASS()
 class LOSTARK_API ULostArkSkill_Targeting : public ULostArkSkillGameplayAbility
 {
@@ -26,6 +28,10 @@ protected:
 	void OnTargetCancelledDirect();
 
 	virtual void OnHitCheckReceived(FGameplayEventData Payload) override;
+
+public:
+	UPROPERTY()
+	TObjectPtr<const UInputAction> SkillInputAction;
 
 private:
 	FVector CachedTargetLocation;

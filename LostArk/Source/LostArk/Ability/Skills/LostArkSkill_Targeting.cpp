@@ -2,6 +2,7 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "LostArk/Actor/LostArkTargetActor_GroundSelect.h"
 #include "AbilitySystemComponent.h"
+#include "InputAction.h"
 
 ULostArkSkill_Targeting::ULostArkSkill_Targeting()
 {
@@ -23,8 +24,6 @@ void ULostArkSkill_Targeting::ActivateAbility(const FGameplayAbilitySpecHandle H
 		return;
 	}
 
-	// 시전 시작 시점에 즉각 이동 정지 및 초기 마우스 방향 회전을 수행합니다.
-	HandleActivationBasics(ActorInfo);
 
 	if (!TargetActorClass)
 	{
@@ -62,6 +61,7 @@ void ULostArkSkill_Targeting::ActivateAbility(const FGameplayAbilitySpecHandle H
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[TargetingSkill] Direct TargetActor Spawn Success!"));
 		SpawnedTargetActor->TargetRadius = DamageShapeParams.Radius;
+		SpawnedTargetActor->SkillInputAction = SkillInputAction;
 		SpawnedTargetActor->StartTargeting(this);
 
 		SpawnedTargetActor->OnTargetSelected.AddDynamic(this, &ULostArkSkill_Targeting::OnTargetSelectedDirect);
@@ -93,6 +93,9 @@ void ULostArkSkill_Targeting::EndAbility(const FGameplayAbilitySpecHandle Handle
 
 void ULostArkSkill_Targeting::OnTargetSelectedDirect(const FVector& Location)
 {
+	// 시전 시작 시점에 즉각 이동 정지 및 초기 마우스 방향 회전을 수행합니다.
+	HandleActivationBasics(CurrentActorInfo);
+
 	CachedTargetLocation = Location;
 	UE_LOG(LogTemp, Warning, TEXT("[TargetingSkill] Target Point Confirmed: %s"), *Location.ToString());
 
