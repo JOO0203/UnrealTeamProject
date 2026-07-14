@@ -42,6 +42,8 @@ void ULostArkSkillGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHan
 		return;
 	}
 
+	K2_ActivateAbility();
+
 	if (UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get())
 	{
 		FGameplayTagContainer HasTags;

@@ -24,6 +24,7 @@ void ULostArkSkill_Targeting::ActivateAbility(const FGameplayAbilitySpecHandle H
 		return;
 	}
 
+	K2_ActivateAbility();
 
 	if (!TargetActorClass)
 	{
@@ -98,6 +99,15 @@ void ULostArkSkill_Targeting::OnTargetSelectedDirect(const FVector& Location)
 
 	CachedTargetLocation = Location;
 	UE_LOG(LogTemp, Warning, TEXT("[TargetingSkill] Target Point Confirmed: %s"), *Location.ToString());
+
+	// 여기 추가: 블루프린트에 타겟 위치 전달
+	K2_OnTargetConfirmed(CachedTargetLocation);
+
+	if (SpawnedTargetActor)
+	{
+		SpawnedTargetActor->Destroy();
+		SpawnedTargetActor = nullptr;
+	}
 
 	AActor* AvatarActor = GetAvatarActorFromActorInfo();
 	if (AvatarActor)

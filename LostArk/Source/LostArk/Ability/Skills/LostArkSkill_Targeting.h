@@ -33,6 +33,9 @@ public:
 	UPROPERTY()
 	TObjectPtr<const UInputAction> SkillInputAction;
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Skill|Targeting")
+	void K2_OnTargetConfirmed(const FVector& TargetLocation);
+
 private:
 	FVector CachedTargetLocation;
 
