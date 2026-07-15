@@ -15,6 +15,7 @@
 #include "EnhancedInputComponent.h"
 #include "UI/LostArkDamageTextActor.h"
 #include "Combat/LostArkObjectPoolSubsystem.h"
+#include "LostArk/Public/Abilities/LostArkSkill_Targeting.h"
 #include "UI/LostArkDamageTextActor.h"
 #include "Combat/LostArkObjectPoolSubsystem.h"
 
@@ -112,7 +113,24 @@ void ALostArkCharacter::PossessedBy(AController* NewController)
 			{
 				if (Bind.AbilityClass)
 				{
-					AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Bind.AbilityClass, 1, static_cast<int32>(Bind.InputID), this));
+					UE_LOG(LogTemp, Warning, TEXT("[Character] GiveAbility Called for %s"), *Bind.AbilityClass->GetName());
+					//AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Bind.AbilityClass, 1, static_cast<int32>(Bind.InputID), this));
+
+					FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(
+						FGameplayAbilitySpec(Bind.AbilityClass, 1, static_cast<int32>(Bind.InputID), this)
+					);
+
+					if (FGameplayAbilitySpec* GrantedSpec = AbilitySystemComponent->FindAbilitySpecFromHandle(Handle))
+					{
+						if (ULostArkSkill_Targeting* TargetingAbility = Cast<ULostArkSkill_Targeting>(GrantedSpec->GetPrimaryInstance()))
+						{
+							TargetingAbility->SkillInputAction = Bind.InputAction;
+						}
+						else
+						{
+							UObject* PrimaryInstance = GrantedSpec->GetPrimaryInstance();
+						}
+					}
 				}
 			}
 		}

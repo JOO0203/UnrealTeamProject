@@ -7,6 +7,9 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetSelectedSignature, const FVector&, SelectedLocation);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTargetCancelledSignature);
 
+class UInputAction;
+struct FEnhancedInputActionEventBinding;
+
 UCLASS()
 class LOSTARK_API ALostArkTargetActor_GroundSelect : public AGameplayAbilityTargetActor
 {
@@ -31,6 +34,14 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Targeting")
 	FOnTargetCancelledSignature OnTargetCancelled;
+
+	UPROPERTY()
+	TObjectPtr<const UInputAction> SkillInputAction;
+
+	FEnhancedInputActionEventBinding* SkillActionBindingHandle = nullptr;
+
+	void OnSkillInputPressed();
+
 
 protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
