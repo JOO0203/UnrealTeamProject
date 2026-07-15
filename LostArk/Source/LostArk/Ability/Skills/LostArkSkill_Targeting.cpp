@@ -24,12 +24,8 @@ void ULostArkSkill_Targeting::ActivateAbility(const FGameplayAbilitySpecHandle H
 		return;
 	}
 
-<<<<<<< HEAD
-	K2_ActivateAbility();
-=======
 	// ?쒖쟾 ?쒖옉 ?쒖젏??利됯컖 ?대룞 ?뺤? 諛?珥덇린 留덉슦??諛⑺뼢 ?뚯쟾???섑뻾?⑸땲??
 	HandleActivationBasics(ActorInfo);
->>>>>>> GAS_Character
 
 	if (!TargetActorClass)
 	{
