@@ -57,7 +57,7 @@ ALostArkCharacter::ALostArkCharacter()
 	AttributeSet = CreateDefaultSubobject<ULostArkAttributeSet>(TEXT("AttributeSet"));
 
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
-	WeaponMesh->SetupAttachment(GetMesh(), TEXT("b_wp_1"));
+	WeaponMesh->SetupAttachment(GetMesh());
 
 	bIsLeftFootForward = true;
 	bIsDead = false;
@@ -93,6 +93,26 @@ void ALostArkCharacter::SetWeaponEquipped(bool bIsEquipped)
 	}
 }
 
+void ALostArkCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (WeaponMesh && GetMesh())
+	{
+		// 비전투 상태(등에 맴)로 시작
+		WeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponUnequippedSocketName);
+	}
+}
+
+void ALostArkCharacter::SetWeaponEquipped(bool bIsEquipped)
+{
+	if (WeaponMesh && GetMesh())
+	{
+		FName TargetSocket = bIsEquipped ? WeaponEquippedSocketName : WeaponUnequippedSocketName;
+		WeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TargetSocket);
+	}
+}
+
 void ALostArkCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -112,6 +132,7 @@ void ALostArkCharacter::PossessedBy(AController* NewController)
 			{
 				if (Bind.AbilityClass)
 				{
+					UE_LOG(LogTemp, Warning, TEXT("[Character] GiveAbility Called for %s"), *Bind.AbilityClass->GetName());
 					AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Bind.AbilityClass, 1, static_cast<int32>(Bind.InputID), this));
 				}
 			}
@@ -239,13 +260,13 @@ void ALostArkCharacter::OnAttackingTagChanged(const FGameplayTag CallbackTag, in
 {
 	if (NewCount > 0)
 	{
-		// ?꾪닾(怨듦꺽) 吏꾩엯 ??利됱떆 ?μ갑
+		// 전투(공격) 진입 시 즉시 장착
 		GetWorldTimerManager().ClearTimer(SheathWeaponTimerHandle);
 		SetWeaponEquipped(true);
 	}
 	else
 	{
-		// ?꾪닾 醫낅즺 ????대㉧ ?쒖옉
+		// 전투 종료 시 타이머 시작
 		if (SheathWeaponTimeout > 0.f)
 		{
 			GetWorldTimerManager().SetTimer(SheathWeaponTimerHandle, this, &ALostArkCharacter::PlaySheathWeaponMontage, SheathWeaponTimeout, false);
@@ -265,12 +286,7 @@ void ALostArkCharacter::PlaySheathWeaponMontage()
 	}
 	else
 	{
-		// ?ㅼ젙??紐쏀?二쇨? ?놁쑝硫?利됱떆 ?⑸룄
+		// 설정된 몽타주가 없으면 즉시 납도
 		SetWeaponEquipped(false);
 	}
 }
-
-
-
-
-

@@ -9,7 +9,6 @@ ALostArkDamageTextActor::ALostArkDamageTextActor()
 	DamageTextWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("DamageTextWidgetComponent"));
 	RootComponent = DamageTextWidgetComponent;
 
-	// 스크린 스페이스(Screen Space) 모드로 설정하여 UI 캔버스에 직접 렌더링되게 함
 	DamageTextWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 	DamageTextWidgetComponent->SetDrawSize(FVector2D(200.f, 50.f));
 }
