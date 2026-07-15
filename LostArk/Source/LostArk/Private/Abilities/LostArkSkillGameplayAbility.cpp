@@ -55,6 +55,8 @@ void ULostArkSkillGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHan
 
 	HandleActivationBasics(ActorInfo);
 
+	K2_ActivateAbility();
+
 	if (bApplyDashForce && ActorInfo->AvatarActor.IsValid())
 	{
 		APawn* AvatarPawn = Cast<APawn>(ActorInfo->AvatarActor.Get());
