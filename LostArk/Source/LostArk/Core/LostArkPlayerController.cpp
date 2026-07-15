@@ -1,4 +1,4 @@
-﻿#include "LostArk/Core/LostArkPlayerController.h"
+#include "LostArk/Core/LostArkPlayerController.h"
 #include "GameFramework/Pawn.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "NiagaraSystem.h"
@@ -12,6 +12,9 @@
 #include "AbilitySystemInterface.h"
 #include "AbilitySystemComponent.h"
 #include "LostArk/Core/LostArkCombatInterface.h"
+#include "Blueprint/UserWidget.h"
+#include "LostArk/UI/LostArkHUDWidget.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -30,6 +33,16 @@ void ALostArkPlayerController::BeginPlay()
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
+	}
+
+	if (HUDWidgetClass)
+	{
+		HUDWidget = CreateWidget<ULostArkHUDWidget>(this, HUDWidgetClass);
+		if (HUDWidget)
+		{
+			HUDWidget->AddToViewport();
+			HUDWidget->BindAttributeDelegates();
+		}
 	}
 }
 
@@ -62,7 +75,7 @@ void ALostArkPlayerController::OnInputStarted()
 	{
 		if (IAbilitySystemInterface* ASI = Cast<IAbilitySystemInterface>(ActivePawn))
 		{
-			if (ASI->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Attacking"))))
+			if (ASI->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Attacking"), false)))
 			{
 				return;
 			}
@@ -78,7 +91,7 @@ void ALostArkPlayerController::OnSetDestinationTriggered()
 	{
 		if (IAbilitySystemInterface* ASI = Cast<IAbilitySystemInterface>(ActivePawn))
 		{
-			if (ASI->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Attacking"))))
+			if (ASI->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Attacking"), false)))
 			{
 				return;
 			}
@@ -118,7 +131,7 @@ void ALostArkPlayerController::OnSetDestinationReleased()
 	{
 		if (IAbilitySystemInterface* ASI = Cast<IAbilitySystemInterface>(ControlledPawn))
 		{
-			if (ASI->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Attacking"))))
+			if (ASI->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Attacking"), false)))
 			{
 				FollowTime = 0.f;
 				return;

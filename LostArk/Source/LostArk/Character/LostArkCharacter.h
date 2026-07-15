@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -47,12 +47,20 @@ public:
 
 	virtual void SetCombatState(FGameplayTag NewStateTag) override;
 
+	virtual void ShowDamageText(float DamageAmount) override;
+
 	UFUNCTION(BlueprintCallable, Category = "Character|Abilities")
 	void RequestComboAttackInput();
 
 	UFUNCTION(BlueprintCallable, Category = "Character|Weapon")
 	void SetWeaponEquipped(bool bIsEquipped);
 
+<<<<<<< HEAD
+=======
+	UFUNCTION(BlueprintPure, Category = "Character|Weapon")
+	bool IsWeaponEquipped() const { return bIsWeaponEquipped; }
+
+>>>>>>> GAS_Character
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
@@ -83,6 +91,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	class UAnimMontage* SheathWeaponMontage;
 
+<<<<<<< HEAD
+=======
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character|UI")
+	TSubclassOf<class ALostArkDamageTextActor> DamageTextClass;
+
+>>>>>>> GAS_Character
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character|Abilities")
 	TSubclassOf<class UGameplayAbility> ComboAttackAbilityClass;
 
@@ -94,6 +108,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Character")
 	bool bIsDead;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Character|Weapon")
+	bool bIsWeaponEquipped;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character|State")
 	FGameplayTag CurrentStateTag;

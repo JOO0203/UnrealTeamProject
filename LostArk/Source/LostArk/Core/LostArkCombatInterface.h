@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
@@ -20,5 +20,7 @@ public:
 	virtual bool IsDead() const = 0;
 	virtual FGameplayTag GetCurrentStateTag() const = 0;
 	virtual void SetCombatState(FGameplayTag NewStateTag) = 0;
+	
+	virtual void ShowDamageText(float DamageAmount) {}
 };
 

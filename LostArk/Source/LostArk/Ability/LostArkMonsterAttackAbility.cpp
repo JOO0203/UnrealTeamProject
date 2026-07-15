@@ -65,7 +65,7 @@ void ULostArkMonsterAttackAbility::EndAbility(const FGameplayAbilitySpecHandle H
 	ILostArkCombatInterface* CombatInterface = Cast<ILostArkCombatInterface>(ActorInfo->AvatarActor.Get());
 	if (CombatInterface && !CombatInterface->IsDead())
 	{
-		CombatInterface->SetCombatState(FGameplayTag::RequestGameplayTag(FName("State.Idle")));
+		CombatInterface->SetCombatState(FGameplayTag::RequestGameplayTag(FName("State.Idle"), false));
 	}
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);

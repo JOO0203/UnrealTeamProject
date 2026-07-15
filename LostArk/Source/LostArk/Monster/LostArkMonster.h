@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -37,6 +37,8 @@ public:
 
 	virtual void SetCombatState(FGameplayTag NewStateTag) override { SetMonsterState(NewStateTag); }
 
+	virtual void ShowDamageText(float DamageAmount) override;
+
 	UFUNCTION(BlueprintCallable, Category = "Monster|Abilities")
 	bool TryActivateAttack();
 
@@ -61,6 +63,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Settings")
 	float SpawnDuration;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Monster|UI")
+	TSubclassOf<class ALostArkDamageTextActor> DamageTextClass;
 
 	/** 에디터에서 조절 가능한 몬스터 기본 공격 사거리 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Settings")

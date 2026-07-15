@@ -1,4 +1,4 @@
-﻿#include "LostArk/Character/LostArkCharacter.h"
+#include "LostArk/Character/LostArkCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
@@ -13,7 +13,14 @@
 #include "LostArk/Ability/LostArkCharacterComboAttackAbility.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "EnhancedInputComponent.h"
+<<<<<<< HEAD
 #include "LostArk/Ability/Skills/LostArkSkill_Targeting.h"
+=======
+#include "LostArk/UI/LostArkDamageTextActor.h"
+#include "LostArk/System/LostArkObjectPoolSubsystem.h"
+#include "LostArk/UI/LostArkDamageTextActor.h"
+#include "LostArk/System/LostArkObjectPoolSubsystem.h"
+>>>>>>> GAS_Character
 
 static const float DefaultCapsuleRadius = 42.f;
 static const float DefaultCapsuleHalfHeight = 96.f;
@@ -58,6 +65,7 @@ ALostArkCharacter::ALostArkCharacter()
 
 	bIsLeftFootForward = true;
 	bIsDead = false;
+	bIsWeaponEquipped = false;
 
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
@@ -74,13 +82,21 @@ void ALostArkCharacter::BeginPlay()
 
 	if (WeaponMesh && GetMesh())
 	{
+<<<<<<< HEAD
 		// 비전투 상태(등에 맴)로 시작
+=======
+>>>>>>> GAS_Character
 		WeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponUnequippedSocketName);
 	}
 }
 
 void ALostArkCharacter::SetWeaponEquipped(bool bIsEquipped)
 {
+<<<<<<< HEAD
+=======
+	bIsWeaponEquipped = bIsEquipped;
+	
+>>>>>>> GAS_Character
 	if (WeaponMesh && GetMesh())
 	{
 		FName TargetSocket = bIsEquipped ? WeaponEquippedSocketName : WeaponUnequippedSocketName;
@@ -129,7 +145,11 @@ void ALostArkCharacter::PossessedBy(AController* NewController)
 			}
 		}
 
+<<<<<<< HEAD
 		AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("State.Attacking")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ALostArkCharacter::OnAttackingTagChanged);
+=======
+		AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("State.Attacking"), false), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ALostArkCharacter::OnAttackingTagChanged);
+>>>>>>> GAS_Character
 	}
 }
 
@@ -145,6 +165,29 @@ void ALostArkCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 			{
 				EnhancedInputComponent->BindAction(Bind.InputAction, ETriggerEvent::Started, this, &ALostArkCharacter::OnSkillInputPressed, Bind.InputID);
 				EnhancedInputComponent->BindAction(Bind.InputAction, ETriggerEvent::Completed, this, &ALostArkCharacter::OnSkillInputReleased, Bind.InputID);
+			}
+		}
+	}
+}
+
+void ALostArkCharacter::ShowDamageText(float DamageAmount)
+{
+	if (DamageTextClass)
+	{
+		if (ULostArkObjectPoolSubsystem* Pool = GetWorld()->GetSubsystem<ULostArkObjectPoolSubsystem>())
+		{
+			// 탑뷰(쿼터뷰) 카메라 거리를 고려하여 오프셋(흔들림) 범위를 설정합니다.
+			float RandomX = FMath::RandRange(-50.f, 50.f);
+			float RandomY = FMath::RandRange(-50.f, 50.f);
+			float RandomZ = FMath::RandRange(50.f, 150.f);
+			FVector SpawnLoc = GetActorLocation() + FVector(RandomX, RandomY, RandomZ);
+			
+			if (AActor* SpawnedText = Pool->AcquireActor(DamageTextClass, SpawnLoc, FRotator::ZeroRotator))
+			{
+				if (ALostArkDamageTextActor* TextActor = Cast<ALostArkDamageTextActor>(SpawnedText))
+				{
+					TextActor->SetupDamageText(DamageAmount);
+				}
 			}
 		}
 	}
@@ -179,7 +222,7 @@ void ALostArkCharacter::Die()
 
 	if (AbilitySystemComponent)
 	{
-		AbilitySystemComponent->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Dead")));
+		AbilitySystemComponent->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Dead"), false));
 		AbilitySystemComponent->CancelAllAbilities();
 	}
 
@@ -228,13 +271,21 @@ void ALostArkCharacter::OnAttackingTagChanged(const FGameplayTag CallbackTag, in
 {
 	if (NewCount > 0)
 	{
+<<<<<<< HEAD
 		// 전투(공격) 진입 시 즉시 장착
+=======
+		// ?꾪닾(怨듦꺽) 吏꾩엯 ??利됱떆 ?μ갑
+>>>>>>> GAS_Character
 		GetWorldTimerManager().ClearTimer(SheathWeaponTimerHandle);
 		SetWeaponEquipped(true);
 	}
 	else
 	{
+<<<<<<< HEAD
 		// 전투 종료 시 타이머 시작
+=======
+		// ?꾪닾 醫낅즺 ????대㉧ ?쒖옉
+>>>>>>> GAS_Character
 		if (SheathWeaponTimeout > 0.f)
 		{
 			GetWorldTimerManager().SetTimer(SheathWeaponTimerHandle, this, &ALostArkCharacter::PlaySheathWeaponMontage, SheathWeaponTimeout, false);
@@ -245,6 +296,23 @@ void ALostArkCharacter::OnAttackingTagChanged(const FGameplayTag CallbackTag, in
 		}
 	}
 }
+<<<<<<< HEAD
+=======
+
+void ALostArkCharacter::PlaySheathWeaponMontage()
+{
+	if (SheathWeaponMontage)
+	{
+		PlayAnimMontage(SheathWeaponMontage);
+	}
+	else
+	{
+		// ?ㅼ젙??紐쏀?二쇨? ?놁쑝硫?利됱떆 ?⑸룄
+		SetWeaponEquipped(false);
+	}
+}
+
+>>>>>>> GAS_Character
 
 void ALostArkCharacter::PlaySheathWeaponMontage()
 {
