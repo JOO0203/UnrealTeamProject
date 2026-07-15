@@ -1,4 +1,4 @@
-#include "LostArk/Ability/LostArkSkillGameplayAbility.h"
+﻿#include "LostArk/Ability/LostArkSkillGameplayAbility.h"
 #include "AbilitySystemComponent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_ApplyRootMotionConstantForce.h"
@@ -25,13 +25,13 @@ ULostArkSkillGameplayAbility::ULostArkSkillGameplayAbility()
 	bRotateToMouseOnActivate = true;
 	bAbortNavigationMove = true;
 
-	AbilityTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Attacking")));
-	AbilityTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Skill")));
+	AbilityTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Attacking"), false));
+	AbilityTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Skill"), false));
 
-	ActivationOwnedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Attacking")));
-	ActivationOwnedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Skill")));
+	ActivationOwnedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Attacking"), false));
+	ActivationOwnedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Skill"), false));
 
-	ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Skill")));
+	ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Skill"), false));
 }
 
 void ULostArkSkillGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -45,10 +45,10 @@ void ULostArkSkillGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHan
 	if (UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get())
 	{
 		FGameplayTagContainer HasTags;
-		HasTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Attacking")));
+		HasTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Attacking"), false));
 
 		FGameplayTagContainer BlockTags;
-		BlockTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Skill")));
+		BlockTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Skill"), false));
 
 		ASC->CancelAbilities(&HasTags, &BlockTags, this);
 	}
@@ -70,7 +70,7 @@ void ULostArkSkillGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHan
 		{
 			if (UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get())
 			{
-				ASC->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Invincible")));
+				ASC->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Invincible"), false));
 			}
 		}
 
@@ -152,7 +152,7 @@ void ULostArkSkillGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle H
 		{
 			if (UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get())
 			{
-				ASC->RemoveLooseGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Invincible")));
+				ASC->RemoveLooseGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Invincible"), false));
 			}
 		}
 	}

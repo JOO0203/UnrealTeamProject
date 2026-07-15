@@ -32,10 +32,10 @@ void ULostArkComboSkillAbility::ActivateAbility(const FGameplayAbilitySpecHandle
 	if (UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get())
 	{
 		FGameplayTagContainer HasTags;
-		HasTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Attacking")));
+		HasTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Attacking"), false));
 
 		FGameplayTagContainer BlockTags;
-		BlockTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Skill")));
+		BlockTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Skill"), false));
 
 		ASC->CancelAbilities(&HasTags, &BlockTags, this);
 	}
@@ -162,6 +162,18 @@ void ULostArkComboSkillAbility::PlayComboSegment(int32 Index)
 	CurrentPlayTask->OnInterrupted.AddDynamic(this, &ULostArkComboSkillAbility::OnComboMontageInterrupted);
 	CurrentPlayTask->OnCancelled.AddDynamic(this, &ULostArkComboSkillAbility::OnComboMontageInterrupted);
 	CurrentPlayTask->ReadyForActivation();
+
+	if (ComboEventTag.IsValid())
+	{
+		if (UAbilitySystemComponent* ASC = CurrentActorInfo->AbilitySystemComponent.Get())
+		{
+			FGameplayEventData Payload;
+			Payload.EventTag = ComboEventTag;
+			Payload.EventMagnitude = static_cast<float>(Index + 1); // 다음 콤보 단계
+			
+			ASC->HandleGameplayEvent(Payload.EventTag, &Payload);
+		}
+	}
 
 	if (Index > 0 && Index < 4)
 	{
