@@ -17,6 +17,14 @@ void ULostArkSkill_Targeting::ActivateAbility(const FGameplayAbilitySpecHandle H
 {
 	UE_LOG(LogTemp, Warning, TEXT("[TargetingSkill] ActivateAbility Called (Direct Spawn Style)!"));
 
+	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
+	{
+		UE_LOG(LogTemp, Error, TEXT("[TargetingSkill] CommitAbility Failed!"));
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
+	}
+
+	// ?쒖쟾 ?쒖옉 ?쒖젏??利됯컖 ?대룞 ?뺤? 諛?珥덇린 留덉슦??諛⑺뼢 ?뚯쟾???섑뻾?⑸땲??
 	HandleActivationBasics(ActorInfo);
 
 	K2_ActivateAbility();
@@ -91,13 +99,6 @@ void ULostArkSkill_Targeting::OnTargetSelectedDirect(const FVector& Location)
 {
 	CachedTargetLocation = Location;
 	UE_LOG(LogTemp, Warning, TEXT("[TargetingSkill] Target Point Confirmed: %s"), *Location.ToString());
-
-	if (!CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo))
-	{
-		UE_LOG(LogTemp, Error, TEXT("[TargetingSkill] CommitAbility Failed at Second Click! (Already on cooldown or no cost)"));
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-		return;
-	}
 
 	// 여기 추가: 블루프린트에 타겟 위치 전달
 	K2_OnTargetConfirmed(CachedTargetLocation);
