@@ -230,8 +230,3 @@ UGameplayEffect* ULostArkSkillGameplayAbility::GetCooldownGameplayEffect() const
 	}
 	return Super::GetCooldownGameplayEffect();
 }
-
-
-
-
-
