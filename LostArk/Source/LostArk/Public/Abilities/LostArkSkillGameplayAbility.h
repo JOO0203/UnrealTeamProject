@@ -16,6 +16,7 @@ public:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 	virtual UGameplayEffect* GetCooldownGameplayEffect() const override;
+	virtual UGameplayEffect* GetCostGameplayEffect() const override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill")
@@ -41,6 +42,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill|Dash", meta = (EditCondition = "bApplyDashForce"))
 	bool bInvincibleDuringDash;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Skill")
+	float SkillPlayRate;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill")
 	TSubclassOf<class UGameplayEffect> CooldownEffectClass;
