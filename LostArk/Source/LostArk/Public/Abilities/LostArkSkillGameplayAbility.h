@@ -42,7 +42,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill|Dash", meta = (EditCondition = "bApplyDashForce"))
 	bool bInvincibleDuringDash;
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill")
 	TSubclassOf<class UGameplayEffect> CooldownEffectClass;
 
