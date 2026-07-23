@@ -384,7 +384,10 @@ void UBossTerrainGimmickComponent::ExecuteDestroySlice()
 		return;
 	}
 
-	if (ABossRaidGameMode* GM = GetWorld()->GetAuthGameMode<ABossRaidGameMode>())
+	ABossRaidGameMode* GM = GetWorld()->GetAuthGameMode<ABossRaidGameMode>();
+	UE_LOG(LogTemp, Warning, TEXT("[TerrainGimmick] ExecuteDestroySlice: Slice=%d GameMode=%s"),
+		PendingDestroySliceIndex, GM ? TEXT("OK") : TEXT("NULL(레벨 GameMode 가 BossRaidGameMode 인지 확인)"));
+	if (GM)
 	{
 		// 슬라이스 파괴 (레벨팀 ID 시스템 호출). 타워가 그 위에 살아있으면 방송을 받고 함께 소멸
 		GM->DestroySlice(PendingDestroySliceIndex);
